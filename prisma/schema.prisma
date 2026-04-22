@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  name      String
+  heightCm  Float      @map("height_cm")
+  weightKg  Float      @map("weight_kg")
+  age       Int?
+  sex       String?
+  createdAt DateTime   @default(now()) @map("created_at")
+  activities Activity[]
+
+  @@map("users")
+}
+
+model Activity {
+  id                Int      @id @default(autoincrement())
+  userId            Int      @map("user_id")
+  sportType         String   @map("sport_type")
+  intensity         String
+  durationMinutes   Int      @map("duration_minutes")
+  metValue          Float    @map("met_value")
+  estimatedCalories Float    @map("estimated_calories")
+  activityDate      DateTime @map("activity_date")
+  notes             String?
+  createdAt         DateTime @default(now()) @map("created_at")
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("activities")
+}
