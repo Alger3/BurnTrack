@@ -17,10 +17,12 @@ export default function RootLayout({
       <body>
         <header className="border-b border-stone-200 bg-white">
           <nav className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4">
-            <Link href="/" className="text-xl font-bold">
+            <Link href="/home" className="text-xl font-bold">
               BurnTrack
             </Link>
             <div className="flex gap-4 text-sm font-medium text-stone-700">
+              <Link href="/">Login</Link>
+              <Link href="/home">Home</Link>
               <Link href="/profile">Profile</Link>
               <Link href="/dashboard">Dashboard</Link>
               <Link href="/add-activity">Add Activity</Link>
