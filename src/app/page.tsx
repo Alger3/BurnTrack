@@ -8,8 +8,9 @@ export default function LoginPage() {
   const [account, setAccount] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     if (!account.trim() || !password.trim()) {
@@ -18,7 +19,33 @@ export default function LoginPage() {
     }
 
     setError("");
-    router.push("/home");
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          account,
+          password
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError(result.message ?? "Invalid account or password.");
+        return;
+      }
+
+      router.push("/home");
+    } catch {
+      setError("Unable to login right now. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -57,10 +84,11 @@ export default function LoginPage() {
           {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
           <button
-            className="cursor-pointer rounded-md bg-stone-900 px-4 py-2 text-white"
+            className="cursor-pointer rounded-md bg-stone-900 px-4 py-2 text-white disabled:cursor-not-allowed disabled:opacity-70"
+            disabled={isSubmitting}
             type="submit"
           >
-            Login
+            {isSubmitting ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>
