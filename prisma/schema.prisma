@@ -8,14 +8,16 @@ datasource db {
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
-  name      String
-  heightCm  Float      @map("height_cm")
-  weightKg  Float      @map("weight_kg")
-  age       Int?
-  sex       String?
-  createdAt DateTime   @default(now()) @map("created_at")
-  activities Activity[]
+  id           Int        @id @default(autoincrement())
+  email        String     @unique
+  passwordHash String     @map("password_hash")
+  name         String
+  heightCm     Float      @map("height_cm")
+  weightKg     Float      @map("weight_kg")
+  age          Int?
+  sex          String?
+  createdAt    DateTime   @default(now()) @map("created_at")
+  activities   Activity[]
 
   @@map("users")
 }
