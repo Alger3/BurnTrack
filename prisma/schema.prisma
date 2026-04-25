@@ -12,6 +12,8 @@ model User {
   email        String     @unique
   passwordHash String     @map("password_hash")
   name         String
+  /// Allowed values: "admin" and "member". SQLite enforces this through prisma/role-check.sql.
+  role         String     @default("member")
   heightCm     Float      @map("height_cm")
   weightKg     Float      @map("weight_kg")
   age          Int?
