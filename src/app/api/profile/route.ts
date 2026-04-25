@@ -2,10 +2,9 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-const allowedRoles = new Set(["admin", "member"]);
-
 type ProfileRow = {
   id: number;
+  email: string;
   name: string;
   role: string;
   heightCm: number;
@@ -34,6 +33,7 @@ export async function GET() {
   const users = await prisma.$queryRawUnsafe<ProfileRow[]>(
     `SELECT
       id,
+      email,
       name,
       role,
       height_cm AS heightCm,
@@ -69,7 +69,6 @@ export async function PUT(request: Request) {
 
   const body = await request.json();
   const name = typeof body.name === "string" ? body.name.trim() : "";
-  const role = typeof body.role === "string" ? body.role : "";
   const heightCm = Number(body.heightCm);
   const weightKg = Number(body.weightKg);
   const age =
@@ -80,13 +79,6 @@ export async function PUT(request: Request) {
 
   if (!name) {
     return NextResponse.json({ message: "Name is required." }, { status: 400 });
-  }
-
-  if (!allowedRoles.has(role)) {
-    return NextResponse.json(
-      { message: "Role must be Admin or Member." },
-      { status: 400 }
-    );
   }
 
   if (!Number.isFinite(heightCm) || heightCm <= 0) {
@@ -113,14 +105,12 @@ export async function PUT(request: Request) {
   await prisma.$executeRawUnsafe(
     `UPDATE users
     SET name = ?,
-      role = ?,
       height_cm = ?,
       weight_kg = ?,
       age = ?,
       sex = ?
     WHERE id = ?`,
     name,
-    role,
     heightCm,
     weightKg,
     age,

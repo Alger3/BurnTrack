@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 
 export default function ProfilePage() {
+  const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [role, setRole] = useState("member");
   const [heightCm, setHeightCm] = useState("");
@@ -25,6 +26,7 @@ export default function ProfilePage() {
           return;
         }
 
+        setEmail(result.user.email ?? "");
         setName(result.user.name ?? "");
         setRole(result.user.role ?? "member");
         setHeightCm(String(result.user.heightCm ?? ""));
@@ -47,11 +49,6 @@ export default function ProfilePage() {
     setError("");
     setMessage("");
 
-    if (role !== "admin" && role !== "member") {
-      setError("Role must be Admin or Member.");
-      return;
-    }
-
     setIsSaving(true);
 
     try {
@@ -62,7 +59,6 @@ export default function ProfilePage() {
         },
         body: JSON.stringify({
           name,
-          role,
           heightCm,
           weightKg,
           age,
@@ -98,17 +94,20 @@ export default function ProfilePage() {
           />
         </label>
         <label className="grid gap-1">
+          <span>Email</span>
+          <input
+            className="rounded-md border border-stone-300 px-3 py-2"
+            readOnly
+            value={email}
+          />
+        </label>
+        <label className="grid gap-1">
           <span>Role</span>
-          <select
-            className="rounded-md border border-stone-300 bg-white px-3 py-2"
-            disabled={isLoading}
-            name="role"
-            onChange={(event) => setRole(event.target.value)}
+          <input
+            className="rounded-md border border-stone-300 px-3 py-2"
+            readOnly
             value={role}
-          >
-            <option value="member">Member</option>
-            <option value="admin">Admin</option>
-          </select>
+          />
         </label>
         <label className="grid gap-1">
           <span>Height cm</span>
